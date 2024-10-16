@@ -23,11 +23,12 @@ if TYPE_CHECKING:
 
 @pytest.fixture(scope="module")
 async def app(module_mocker: MockerFixture) -> Litestar:
-    from apiradar.litestar import ApiradarConsumer, ApiradarPlugin
     from litestar.app import Litestar
     from litestar.connection import Request
     from litestar.handlers import get, post
     from litestar.response import Stream
+
+    from apiradar.litestar import ApiradarConsumer, ApiradarPlugin
 
     module_mocker.patch("apiradar.client.asyncio.ApiradarClient._instance", None)
     module_mocker.patch("apiradar.client.asyncio.ApiradarClient.start_sync_loop")

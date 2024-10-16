@@ -142,8 +142,9 @@ def test_get_startup_data():
 
 
 def test_get_ninja_api_instances():
-    from apiradar.django import _get_ninja_api_instances
     from ninja import NinjaAPI
+
+    from apiradar.django import _get_ninja_api_instances
 
     apis = _get_ninja_api_instances()
     assert len(apis) == 1

@@ -9,13 +9,14 @@ from importlib import import_module
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Union
 from warnings import warn
 
+from django.conf import settings
+from django.urls import URLPattern, URLResolver, get_resolver
+from django.utils.module_loading import import_string
+
 from apiradar.client.base import Consumer as ApiradarConsumer
 from apiradar.client.logging import get_logger
 from apiradar.client.threading import ApiradarClient
 from apiradar.common import get_versions
-from django.conf import settings
-from django.urls import URLPattern, URLResolver, get_resolver
-from django.utils.module_loading import import_string
 
 
 if TYPE_CHECKING:

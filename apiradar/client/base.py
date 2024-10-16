@@ -19,7 +19,7 @@ from apiradar.client.logging import get_logger
 
 logger = get_logger(__name__)
 
-HUB_BASE_URL = os.getenv("APIRADAR_HUB_BASE_URL") or "http://hub.localhost"
+HUB_BASE_URL = os.getenv("APIRADAR_HUB_BASE_URL") or "https://hub.apiradar.io"
 HUB_VERSION = "v2"
 REQUEST_TIMEOUT = 10
 MAX_QUEUE_TIME = 3600

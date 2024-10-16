@@ -5,14 +5,15 @@ from threading import Timer
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple
 from warnings import warn
 
-from apiradar.client.base import Consumer as ApiradarConsumer
-from apiradar.client.threading import ApiradarClient
-from apiradar.common import get_versions
 from flask import Flask, g
 from flask.wrappers import Response
 from werkzeug.datastructures import Headers
 from werkzeug.exceptions import NotFound
 from werkzeug.test import Client
+
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.client.threading import ApiradarClient
+from apiradar.common import get_versions
 
 
 if TYPE_CHECKING:

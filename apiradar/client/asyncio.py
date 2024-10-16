@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Tuple
 
 import backoff
 import httpx
+
 from apiradar.client.base import MAX_QUEUE_TIME, REQUEST_TIMEOUT, ApiradarClientBase
 from apiradar.client.logging import get_logger
 

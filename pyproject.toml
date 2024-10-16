@@ -7,11 +7,11 @@ name = "apiradar"
 version = "1.0.0"
 description = "Simple API monitoring & analytics for REST APIs built with ReadyAPI, Flask, Django, Starlette and Litestar."
 readme = "README.md"
-authors = ["Apiradar <hello@localhost>"]
+authors = ["Apiradar <hello@apiradar.io>"]
 license = "MIT License"
-homepage = "http://localhost"
-documentation = "http://docs.localhost"
-repository = "http://github.com/raedyapi/apiradar-py"
+homepage = "https://apiradar.khulnasoft.com"
+documentation = "https://docs-apiradar.khulnasoft.com"
+repository = "https://github.com/readyapi/apiradar"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
@@ -19,7 +19,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
-    "Typing :: Typed"
+    "Typing :: Typed",
 ]
 
 [tool.poetry.dependencies]

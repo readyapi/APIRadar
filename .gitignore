@@ -42,7 +42,7 @@ coverage.xml
 .dmypy.json
 dmypy.json
 
-# Poetry local configuration file - http://python-poetry.org/docs/configuration/#local-configuration
+# Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
 poetry.toml
 
 # ruff

@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="http://assets.localhost/logos/logo-vertical-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="http://assets.localhost/logos/logo-vertical-light.png">
-    <img alt="Apiradar logo" src="http://assets.localhost/logos/logo-vertical-light.png" width="150">
+    <source media="(prefers-color-scheme: dark)" srcset="https://assets-apiradar.khulnasoft.com/logos/logo-vertical-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://assets-apiradar.khulnasoft.com/logos/logo-vertical-light.png">
+    <img alt="Apiradar logo" src="https://assets-apiradar.khulnasoft.com/logos/logo-vertical-light.png" width="150">
   </picture>
 </p>
 
@@ -10,30 +10,30 @@
 
 <p align="center"><i>Apiradar is a simple API monitoring & analytics tool with a focus on data privacy.<br>It is super easy to use for API projects in Python or Node.js and never collects sensitive data.</i></p>
 
-<p align="center">🔗 <b><a href="http://localhost" target="_blank">localhost</a></b></p>
+<p align="center">🔗 <b><a href="https://apiradar.khulnasoft.com" target="_blank">apiradar.io</a></b></p>
 
-![Apiradar screenshots](http://assets.localhost/screenshots/overview.png)
+![Apiradar screenshots](https://assets-apiradar.khulnasoft.com/screenshots/overview.png)
 
 ---
 
 # Apiradar client library for Python
 
-[![Tests](http://github.com/raedyapi/apiradar-py/actions/workflows/tests.yaml/badge.svg?event=push)](http://github.com/raedyapi/apiradar-py/actions)
-[![Codecov](http://codecov.io/gh/apiradar/apiradar-py/graph/badge.svg?token=UNLYBY4Y3V)](http://codecov.io/gh/apiradar/apiradar-py)
-[![PyPI](http://img.shields.io/pypi/v/apiradar?logo=pypi&logoColor=white&color=%23006dad)](http://pypi.org/project/apiradar/)
+[![Tests](https://github.com/readyapi/apiradar/actions/workflows/tests.yaml/badge.svg?event=push)](https://github.com/readyapi/apiradar/actions)
+[![Codecov](https://codecov.io/gh/readyapi/apiradar/graph/badge.svg?token=UNLYBY4Y3V)](https://codecov.io/gh/readyapi/apiradar)
+[![PyPI](https://img.shields.io/pypi/v/apiradar?logo=pypi&logoColor=white&color=%23006dad)](https://pypi.org/project/apiradar/)
 
 This client library for Apiradar currently supports the following Python web
 frameworks:
 
-- [ReadyAPI](http://docs.localhost/frameworks/readyapi)
-- [Starlette](http://docs.localhost/frameworks/starlette)
-- [Flask](http://docs.localhost/frameworks/flask)
-- [Django Ninja](http://docs.localhost/frameworks/django-ninja)
-- [Django REST Framework](http://docs.localhost/frameworks/django-rest-framework)
-- [Litestar](http://docs.localhost/frameworks/litestar)
+- [ReadyAPI](https://docs-apiradar.khulnasoft.com/frameworks/readyapi)
+- [Starlette](https://docs-apiradar.khulnasoft.com/frameworks/starlette)
+- [Flask](https://docs-apiradar.khulnasoft.com/frameworks/flask)
+- [Django Ninja](https://docs-apiradar.khulnasoft.com/frameworks/django-ninja)
+- [Django REST Framework](https://docs-apiradar.khulnasoft.com/frameworks/django-rest-framework)
+- [Litestar](https://docs-apiradar.khulnasoft.com/frameworks/litestar)
 
-Learn more about Apiradar on our 🌎 [website](http://localhost) or check out
-the 📚 [documentation](http://docs.localhost).
+Learn more about Apiradar on our 🌎 [website](https://apiradar.khulnasoft.com) or check out
+the 📚 [documentation](https://docs-apiradar.khulnasoft.com).
 
 ## Key features
 
@@ -48,7 +48,7 @@ Use `pip` to install and provide your framework of choice as an extra, for
 example:
 
 ```bash
-pip install readyapi
+pip install apiradar[readyapi]
 ```
 
 The available extras are: `readyapi`, `flask`, `django_rest_framework`,
@@ -56,14 +56,14 @@ The available extras are: `readyapi`, `flask`, `django_rest_framework`,
 
 ## Usage
 
-Our [setup guides](http://docs.localhost/quickstart) include all the details
+Our [setup guides](https://docs-apiradar.khulnasoft.com/quickstart) include all the details
 you need to get started.
 
 ### ReadyAPI
 
 This is an example of how to add the Apiradar middleware to a ReadyAPI
 application. For further instructions, see our
-[setup guide for ReadyAPI](http://docs.localhost/frameworks/readyapi).
+[setup guide for ReadyAPI](https://docs-apiradar.khulnasoft.com/frameworks/readyapi).
 
 ```python
 from readyapi import ReadyAPI
@@ -81,7 +81,7 @@ app.add_middleware(
 
 This is an example of how to add the Apiradar middleware to a Flask application.
 For further instructions, see our
-[setup guide for Flask](http://docs.localhost/frameworks/flask).
+[setup guide for Flask](https://docs-apiradar.khulnasoft.com/frameworks/flask).
 
 ```python
 from flask import Flask
@@ -99,7 +99,7 @@ app.wsgi_app = ApiradarMiddleware(
 
 This is an example of how to add the Apiradar middleware to a Django Ninja or
 Django REST Framework application. For further instructions, see our
-[setup guide for Django](http://docs.localhost/frameworks/django).
+[setup guide for Django](https://docs-apiradar.khulnasoft.com/frameworks/django).
 
 In your Django `settings.py` file:
 
@@ -118,7 +118,7 @@ APIRADAR_MIDDLEWARE = {
 
 This is an example of how to add the Apiradar plugin to a Litestar application.
 For further instructions, see our
-[setup guide for Litestar](http://docs.localhost/frameworks/litestar).
+[setup guide for Litestar](https://docs-apiradar.khulnasoft.com/frameworks/litestar).
 
 ```python
 from litestar import Litestar
@@ -138,9 +138,9 @@ app = Litestar(
 ## Getting help
 
 If you need help please
-[create a new discussion](http://github.com/orgs/apiradar/discussions/categories/q-a)
+[create a new discussion](https://github.com/orgs/apiradar/discussions/categories/q-a)
 on GitHub or
-[join our Slack workspace](http://join.slack.com/t/apiradar-community/shared_invite/zt-2b3xxqhdu-9RMq2HyZbR79wtzNLoGHrg).
+[join our Slack workspace](https://join.slack.com/t/apiradar-community/shared_invite/zt-2b3xxqhdu-9RMq2HyZbR79wtzNLoGHrg).
 
 ## License
 

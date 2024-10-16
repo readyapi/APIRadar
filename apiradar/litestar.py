@@ -4,9 +4,6 @@ import time
 from typing import Callable, Dict, List, Optional, Union
 from warnings import warn
 
-from apiradar.client.asyncio import ApiradarClient
-from apiradar.client.base import Consumer as ApiradarConsumer
-from apiradar.common import get_versions
 from litestar.app import DEFAULT_OPENAPI_CONFIG, Litestar
 from litestar.config.app import AppConfig
 from litestar.connection import Request
@@ -15,6 +12,10 @@ from litestar.enums import ScopeType
 from litestar.handlers import HTTPRouteHandler
 from litestar.plugins import InitPluginProtocol
 from litestar.types import ASGIApp, Message, Receive, Scope, Send
+
+from apiradar.client.asyncio import ApiradarClient
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.common import get_versions
 
 
 __all__ = ["ApiradarPlugin", "ApiradarConsumer"]

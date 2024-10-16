@@ -1,19 +1,19 @@
 default_language_version:
   python: "3.12"
 repos:
-  - repo: http://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
-  - repo: http://github.com/charliermarsh/ruff-pre-commit
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.6.9
     hooks:
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
       - id: ruff-format
-  - repo: http://github.com/python-poetry/poetry
+  - repo: https://github.com/python-poetry/poetry
     rev: "1.8.3"
     hooks:
       - id: poetry-check
