@@ -22,10 +22,10 @@ if TYPE_CHECKING:
     params=["starlette", "readyapi"] if find_spec("readyapi") is not None else ["starlette"],
 )
 async def app(request: FixtureRequest, module_mocker: MockerFixture) -> Starlette:
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.set_startup_data")
-    module_mocker.patch("apitally.starlette.ApitallyMiddleware.delayed_set_startup_data")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.set_startup_data")
+    module_mocker.patch("apiradar.starlette.ApiradarMiddleware.delayed_set_startup_data")
     if request.param == "starlette":
         return get_starlette_app()
     elif request.param == "readyapi":
@@ -39,10 +39,10 @@ def get_starlette_app() -> Starlette:
     from starlette.responses import PlainTextResponse, StreamingResponse
     from starlette.routing import Route
 
-    from apitally.starlette import ApitallyMiddleware
+    from apiradar.starlette import ApiradarMiddleware
 
     def foo(request: Request):
-        request.state.apitally_consumer = "test"
+        request.state.apiradar_consumer = "test"
         return PlainTextResponse("foo")
 
     def foo_bar(request: Request):
@@ -73,7 +73,7 @@ def get_starlette_app() -> Starlette:
         Route("/stream/", stream),
     ]
     app = Starlette(routes=routes)
-    app.add_middleware(ApitallyMiddleware, client_id=CLIENT_ID, env=ENV)
+    app.add_middleware(ApiradarMiddleware, client_id=CLIENT_ID, env=ENV)
     return app
 
 
@@ -81,13 +81,13 @@ def get_readyapi_app() -> Starlette:
     from readyapi import Query, ReadyAPI, Request
     from readyapi.responses import StreamingResponse
 
-    from apitally.readyapi import ApitallyConsumer, ApitallyMiddleware
+    from apiradar.readyapi import ApiradarConsumer, ApiradarMiddleware
 
-    def identify_consumer(request: Request) -> Optional[ApitallyConsumer]:
-        return ApitallyConsumer("test", name="Test")
+    def identify_consumer(request: Request) -> Optional[ApiradarConsumer]:
+        return ApiradarConsumer("test", name="Test")
 
     app = ReadyAPI(title="Test App", description="A simple test app.", version="1.2.3")
-    app.add_middleware(ApitallyMiddleware, client_id=CLIENT_ID, env=ENV, identify_consumer_callback=identify_consumer)
+    app.add_middleware(ApiradarMiddleware, client_id=CLIENT_ID, env=ENV, identify_consumer_callback=identify_consumer)
 
     @app.get("/foo/")
     def foo():
@@ -123,7 +123,7 @@ def get_readyapi_app() -> Starlette:
 def test_middleware_requests_ok(app: Starlette, mocker: MockerFixture):
     from starlette.testclient import TestClient
 
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
     client = TestClient(app)
 
     response = client.get("/foo/")
@@ -158,8 +158,8 @@ def test_middleware_requests_ok(app: Starlette, mocker: MockerFixture):
 def test_middleware_requests_error(app: Starlette, mocker: MockerFixture):
     from starlette.testclient import TestClient
 
-    mock1 = mocker.patch("apitally.client.base.RequestCounter.add_request")
-    mock2 = mocker.patch("apitally.client.base.ServerErrorCounter.add_server_error")
+    mock1 = mocker.patch("apiradar.client.base.RequestCounter.add_request")
+    mock2 = mocker.patch("apiradar.client.base.ServerErrorCounter.add_server_error")
     client = TestClient(app, raise_server_exceptions=False)
 
     response = client.post("/baz/")
@@ -180,7 +180,7 @@ def test_middleware_requests_error(app: Starlette, mocker: MockerFixture):
 def test_middleware_requests_unhandled(app: Starlette, mocker: MockerFixture):
     from starlette.testclient import TestClient
 
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
     client = TestClient(app)
 
     response = client.post("/xxx/")
@@ -191,7 +191,7 @@ def test_middleware_requests_unhandled(app: Starlette, mocker: MockerFixture):
 def test_middleware_validation_error(app: Starlette, mocker: MockerFixture):
     from starlette.testclient import TestClient
 
-    mock = mocker.patch("apitally.client.base.ValidationErrorCounter.add_validation_errors")
+    mock = mocker.patch("apiradar.client.base.ValidationErrorCounter.add_validation_errors")
     client = TestClient(app)
 
     # Validation error as foo must be an integer
@@ -209,9 +209,9 @@ def test_middleware_validation_error(app: Starlette, mocker: MockerFixture):
 
 
 def test_get_startup_data(app: Starlette, mocker: MockerFixture):
-    from apitally.starlette import _get_startup_data
+    from apiradar.starlette import _get_startup_data
 
-    mocker.patch("apitally.starlette.ApitallyClient")
+    mocker.patch("apiradar.starlette.ApiradarClient")
     if app.middleware_stack is None:
         app.middleware_stack = app.build_middleware_stack()
 

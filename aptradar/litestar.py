@@ -13,24 +13,24 @@ from litestar.handlers import HTTPRouteHandler
 from litestar.plugins import InitPluginProtocol
 from litestar.types import ASGIApp, Message, Receive, Scope, Send
 
-from apitally.client.asyncio import ApitallyClient
-from apitally.client.base import Consumer as ApitallyConsumer
-from apitally.common import get_versions
+from apiradar.client.asyncio import ApiradarClient
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.common import get_versions
 
 
-__all__ = ["ApitallyPlugin", "ApitallyConsumer"]
+__all__ = ["ApiradarPlugin", "ApiradarConsumer"]
 
 
-class ApitallyPlugin(InitPluginProtocol):
+class ApiradarPlugin(InitPluginProtocol):
     def __init__(
         self,
         client_id: str,
         env: str = "dev",
         app_version: Optional[str] = None,
         filter_openapi_paths: bool = True,
-        identify_consumer_callback: Optional[Callable[[Request], Union[str, ApitallyConsumer, None]]] = None,
+        identify_consumer_callback: Optional[Callable[[Request], Union[str, ApiradarConsumer, None]]] = None,
     ) -> None:
-        self.client = ApitallyClient(client_id=client_id, env=env)
+        self.client = ApiradarClient(client_id=client_id, env=env)
         self.app_version = app_version
         self.filter_openapi_paths = filter_openapi_paths
         self.identify_consumer_callback = identify_consumer_callback
@@ -188,20 +188,20 @@ class ApitallyPlugin(InitPluginProtocol):
             return path == self.openapi_path or path.startswith(self.openapi_path + "/")
         return False  # pragma: no cover
 
-    def get_consumer(self, request: Request) -> Optional[ApitallyConsumer]:
-        if hasattr(request.state, "apitally_consumer") and request.state.apitally_consumer:
-            return ApitallyConsumer.from_string_or_object(request.state.apitally_consumer)
+    def get_consumer(self, request: Request) -> Optional[ApiradarConsumer]:
+        if hasattr(request.state, "apiradar_consumer") and request.state.apiradar_consumer:
+            return ApiradarConsumer.from_string_or_object(request.state.apiradar_consumer)
         if hasattr(request.state, "consumer_identifier") and request.state.consumer_identifier:
             # Keeping this for legacy support
             warn(
                 "Providing a consumer identifier via `request.state.consumer_identifier` is deprecated, "
-                "use `request.state.apitally_consumer` instead.",
+                "use `request.state.apiradar_consumer` instead.",
                 DeprecationWarning,
             )
-            return ApitallyConsumer.from_string_or_object(request.state.consumer_identifier)
+            return ApiradarConsumer.from_string_or_object(request.state.consumer_identifier)
         if self.identify_consumer_callback is not None:
             consumer = self.identify_consumer_callback(request)
-            return ApitallyConsumer.from_string_or_object(consumer)
+            return ApiradarConsumer.from_string_or_object(consumer)
         return None
 
 

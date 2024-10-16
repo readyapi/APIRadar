@@ -23,7 +23,7 @@ def bar(request: HttpRequest) -> str:
 
 @api.put("/baz")
 def baz(request: HttpRequest) -> str:
-    request.apitally_consumer = "baz"  # type: ignore[attr-defined]
+    request.apiradar_consumer = "baz"  # type: ignore[attr-defined]
     raise ValueError("baz")
 
 

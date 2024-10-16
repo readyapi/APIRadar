@@ -12,14 +12,14 @@ from .constants import CLIENT_ID, ENV
 
 
 if TYPE_CHECKING:
-    from apitally.client.threading import ApitallyClient
+    from apiradar.client.threading import ApiradarClient
 
 
 @pytest.fixture(scope="module")
-def client() -> ApitallyClient:
-    from apitally.client.threading import ApitallyClient
+def client() -> ApiradarClient:
+    from apiradar.client.threading import ApiradarClient
 
-    client = ApitallyClient(client_id=CLIENT_ID, env=ENV)
+    client = ApiradarClient(client_id=CLIENT_ID, env=ENV)
     client.request_counter.add_request(
         consumer=None,
         method="GET",
@@ -56,9 +56,9 @@ def client() -> ApitallyClient:
     return client
 
 
-def test_sync_loop(client: ApitallyClient, mocker: MockerFixture):
-    send_sync_data_mock = mocker.patch("apitally.client.threading.ApitallyClient.send_sync_data")
-    mocker.patch("apitally.client.base.INITIAL_SYNC_INTERVAL", 0.05)
+def test_sync_loop(client: ApiradarClient, mocker: MockerFixture):
+    send_sync_data_mock = mocker.patch("apiradar.client.threading.ApiradarClient.send_sync_data")
+    mocker.patch("apiradar.client.base.INITIAL_SYNC_INTERVAL", 0.05)
 
     client.start_sync_loop()
     time.sleep(0.02)  # Ensure loop enters first iteration
@@ -67,8 +67,8 @@ def test_sync_loop(client: ApitallyClient, mocker: MockerFixture):
     assert send_sync_data_mock.call_count >= 1
 
 
-def test_send_sync_data(client: ApitallyClient, requests_mock: Mocker):
-    from apitally.client.base import HUB_BASE_URL, HUB_VERSION
+def test_send_sync_data(client: ApiradarClient, requests_mock: Mocker):
+    from apiradar.client.base import HUB_BASE_URL, HUB_VERSION
 
     mock = requests_mock.register_uri("POST", f"{HUB_BASE_URL}/{HUB_VERSION}/{CLIENT_ID}/{ENV}/sync")
     with requests.Session() as session:
@@ -82,8 +82,8 @@ def test_send_sync_data(client: ApitallyClient, requests_mock: Mocker):
     assert request_data["validation_errors"][0]["error_count"] == 1
 
 
-def test_set_startup_data(client: ApitallyClient, requests_mock: Mocker):
-    from apitally.client.base import HUB_BASE_URL, HUB_VERSION
+def test_set_startup_data(client: ApiradarClient, requests_mock: Mocker):
+    from apiradar.client.base import HUB_BASE_URL, HUB_VERSION
 
     mock = requests_mock.register_uri("POST", f"{HUB_BASE_URL}/{HUB_VERSION}/{CLIENT_ID}/{ENV}/startup")
     data = {"paths": [], "client_version": "1.0.0", "starlette_version": "0.28.0", "python_version": "3.11.4"}

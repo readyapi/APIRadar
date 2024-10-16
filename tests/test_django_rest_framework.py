@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 @pytest.fixture(scope="module")
 def reset_modules() -> None:
     for module in list(sys.modules):
-        if module.startswith("django.") or module.startswith("rest_framework.") or module.startswith("apitally."):
+        if module.startswith("django.") or module.startswith("rest_framework.") or module.startswith("apiradar."):
             del sys.modules[module]
 
 
@@ -28,17 +28,17 @@ def setup(reset_modules, module_mocker: MockerFixture) -> None:
     import django
     from django.conf import settings
 
-    module_mocker.patch("apitally.client.threading.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.threading.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.threading.ApitallyClient.set_startup_data")
-    module_mocker.patch("apitally.django.ApitallyMiddleware.config", None)
+    module_mocker.patch("apiradar.client.threading.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.set_startup_data")
+    module_mocker.patch("apiradar.django.ApiradarMiddleware.config", None)
 
     settings.configure(
         ROOT_URLCONF="tests.django_rest_framework_urls",
         ALLOWED_HOSTS=["testserver"],
         SECRET_KEY="secret",
         MIDDLEWARE=[
-            "apitally.django_rest_framework.ApitallyMiddleware",
+            "apiradar.django_rest_framework.ApiradarMiddleware",
             "django.middleware.common.CommonMiddleware",
         ],
         INSTALLED_APPS=[
@@ -46,7 +46,7 @@ def setup(reset_modules, module_mocker: MockerFixture) -> None:
             "django.contrib.contenttypes",
             "rest_framework",
         ],
-        APITALLY_MIDDLEWARE={
+        APIRADAR_MIDDLEWARE={
             "client_id": "76b5cb91-a0a4-4ea0-a894-57d2b9fcb2c9",
             "env": "dev",
             "urlconf": ["tests.django_rest_framework_urls"],
@@ -66,7 +66,7 @@ def client(module_mocker: MockerFixture) -> APIClient:
 
 
 def test_middleware_requests_ok(client: APIClient, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.get("/foo/123/")
     assert response.status_code == 200
@@ -88,7 +88,7 @@ def test_middleware_requests_ok(client: APIClient, mocker: MockerFixture):
 
 
 def test_middleware_requests_404(client: APIClient, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.get("/api/none")
     assert response.status_code == 404
@@ -96,8 +96,8 @@ def test_middleware_requests_404(client: APIClient, mocker: MockerFixture):
 
 
 def test_middleware_requests_error(client: APIClient, mocker: MockerFixture):
-    mock1 = mocker.patch("apitally.client.base.RequestCounter.add_request")
-    mock2 = mocker.patch("apitally.client.base.ServerErrorCounter.add_server_error")
+    mock1 = mocker.patch("apiradar.client.base.RequestCounter.add_request")
+    mock2 = mocker.patch("apiradar.client.base.ServerErrorCounter.add_server_error")
 
     response = client.put("/baz/")
     assert response.status_code == 500
@@ -115,7 +115,7 @@ def test_middleware_requests_error(client: APIClient, mocker: MockerFixture):
 
 
 def test_get_startup_data():
-    from apitally.django import _get_startup_data
+    from apiradar.django import _get_startup_data
 
     data = _get_startup_data(app_version="1.2.3", urlconfs=[None])
     openapi = json.loads(data["openapi"])
@@ -129,7 +129,7 @@ def test_get_startup_data():
 
 
 def test_get_drf_api_endpoints():
-    from apitally.django import _get_drf_paths
+    from apiradar.django import _get_drf_paths
 
     endpoints = _get_drf_paths([None])
     assert len(endpoints) == 4

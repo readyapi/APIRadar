@@ -98,6 +98,6 @@ jobs:
       - name: Install test dependencies
         run: poetry install --no-interaction --no-root --only test
       - name: Install app dependencies
-        run: poetry run pip install ${{ matrix.deps }} ./dist/apitally-*.whl
+        run: poetry run pip install ${{ matrix.deps }} ./dist/apiradar-*.whl
       - name: Run tests
         run: poetry run make test

@@ -20,19 +20,19 @@ if TYPE_CHECKING:
 def app(module_mocker: MockerFixture) -> Flask:
     from flask import Flask, g
 
-    from apitally.flask import ApitallyMiddleware
+    from apiradar.flask import ApiradarMiddleware
 
-    module_mocker.patch("apitally.client.threading.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.threading.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.threading.ApitallyClient.set_startup_data")
-    module_mocker.patch("apitally.flask.ApitallyMiddleware.delayed_set_startup_data")
+    module_mocker.patch("apiradar.client.threading.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.set_startup_data")
+    module_mocker.patch("apiradar.flask.ApiradarMiddleware.delayed_set_startup_data")
 
     app = Flask("test")
-    app.wsgi_app = ApitallyMiddleware(app, client_id=CLIENT_ID, env=ENV)  # type: ignore[method-assign]
+    app.wsgi_app = ApiradarMiddleware(app, client_id=CLIENT_ID, env=ENV)  # type: ignore[method-assign]
 
     @app.route("/foo/<bar>")
     def foo_bar(bar: int):
-        g.apitally_consumer = "test"
+        g.apiradar_consumer = "test"
         return f"foo: {bar}"
 
     @app.route("/bar", methods=["POST"])
@@ -47,7 +47,7 @@ def app(module_mocker: MockerFixture) -> Flask:
 
 
 def test_middleware_requests_ok(app: Flask, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
     client = app.test_client()
 
     response = client.get("/foo/123")
@@ -69,8 +69,8 @@ def test_middleware_requests_ok(app: Flask, mocker: MockerFixture):
 
 
 def test_middleware_requests_error(app: Flask, mocker: MockerFixture):
-    mock1 = mocker.patch("apitally.client.base.RequestCounter.add_request")
-    mock2 = mocker.patch("apitally.client.base.ServerErrorCounter.add_server_error")
+    mock1 = mocker.patch("apiradar.client.base.RequestCounter.add_request")
+    mock2 = mocker.patch("apiradar.client.base.ServerErrorCounter.add_server_error")
     client = app.test_client()
 
     response = client.put("/baz")
@@ -89,7 +89,7 @@ def test_middleware_requests_error(app: Flask, mocker: MockerFixture):
 
 
 def test_middleware_requests_unhandled(app: Flask, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
     client = app.test_client()
 
     response = client.post("/xxx")
@@ -98,7 +98,7 @@ def test_middleware_requests_unhandled(app: Flask, mocker: MockerFixture):
 
 
 def test_get_startup_data(app: Flask):
-    from apitally.flask import _get_startup_data
+    from apiradar.flask import _get_startup_data
 
     data = _get_startup_data(app, app_version="1.2.3", openapi_url="/openapi.json")
     assert len(data["paths"]) == 3

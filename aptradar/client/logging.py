@@ -2,8 +2,8 @@ import logging
 import os
 
 
-debug = os.getenv("APITALLY_DEBUG", "false").lower() in {"true", "yes", "y", "1"}
-root_logger = logging.getLogger("apitally")
+debug = os.getenv("APIRADAR_DEBUG", "false").lower() in {"true", "yes", "y", "1"}
+root_logger = logging.getLogger("apiradar")
 
 if debug:
     root_logger.setLevel(logging.DEBUG)

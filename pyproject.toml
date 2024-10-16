@@ -3,15 +3,15 @@ requires = ["poetry-core", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
-name = "apitally"
+name = "apiradar"
 version = "1.0.0"
 description = "Simple API monitoring & analytics for REST APIs built with ReadyAPI, Flask, Django, Starlette and Litestar."
 readme = "README.md"
-authors = ["Apitally <hello@localhost>"]
+authors = ["Apiradar <hello@localhost>"]
 license = "MIT License"
 homepage = "http://localhost"
 documentation = "http://docs.localhost"
-repository = "http://github.com/raedyapi/apitally-py"
+repository = "http://github.com/raedyapi/apiradar-py"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
@@ -118,7 +118,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 
 [tool.coverage.run]
-source = ["apitally"]
+source = ["apiradar"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING"]

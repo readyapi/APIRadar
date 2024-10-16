@@ -15,7 +15,7 @@ def get_versions(*packages, app_version: Optional[str] = None) -> Dict[str, str]
 def _get_common_package_versions() -> Dict[str, Optional[str]]:
     return {
         "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
-        "apitally": _get_package_version("apitally"),
+        "apiradar": _get_package_version("apiradar"),
         "uvicorn": _get_package_version("uvicorn"),
         "hypercorn": _get_package_version("hypercorn"),
         "daphne": _get_package_version("daphne"),

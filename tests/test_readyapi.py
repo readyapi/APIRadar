@@ -26,12 +26,12 @@ except ImportError:
 def app(module_mocker: MockerFixture) -> ReadyAPI:
     from readyapi import ReadyAPI
 
-    from apitally.readyapi import ApitallyMiddleware
+    from apiradar.readyapi import ApiradarMiddleware
 
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.set_startup_data")
-    module_mocker.patch("apitally.starlette.ApitallyMiddleware.delayed_set_startup_data")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.set_startup_data")
+    module_mocker.patch("apiradar.starlette.ApiradarMiddleware.delayed_set_startup_data")
 
     def identify_consumer(request: Request) -> Optional[str]:
         if consumer := request.query_params.get("consumer"):
@@ -39,7 +39,7 @@ def app(module_mocker: MockerFixture) -> ReadyAPI:
         return None
 
     app = ReadyAPI()
-    app.add_middleware(ApitallyMiddleware, client_id=CLIENT_ID, env=ENV, identify_consumer_callback=identify_consumer)
+    app.add_middleware(ApiradarMiddleware, client_id=CLIENT_ID, env=ENV, identify_consumer_callback=identify_consumer)
 
     @app.get("/foo/")
     def foo():
@@ -51,14 +51,14 @@ def app(module_mocker: MockerFixture) -> ReadyAPI:
 
     @app.get("/baz/")
     def baz(request: Request):
-        request.state.apitally_consumer = "baz"
+        request.state.apiradar_consumer = "baz"
         return "baz"
 
     return app
 
 
 def test_get_openapi(app: ReadyAPI):
-    from apitally.starlette import _get_openapi
+    from apiradar.starlette import _get_openapi
 
     openapi = _get_openapi(app, "/openapi.json")
     assert openapi is not None

@@ -28,11 +28,11 @@ async def app(module_mocker: MockerFixture) -> Litestar:
     from litestar.handlers import get, post
     from litestar.response import Stream
 
-    from apitally.litestar import ApitallyConsumer, ApitallyPlugin
+    from apiradar.litestar import ApiradarConsumer, ApiradarPlugin
 
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.asyncio.ApitallyClient.set_startup_data")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.asyncio.ApiradarClient.set_startup_data")
 
     @get("/foo")
     async def foo() -> str:
@@ -40,7 +40,7 @@ async def app(module_mocker: MockerFixture) -> Litestar:
 
     @get("/foo/{bar:str}")
     async def foo_bar(request: Request, bar: str) -> str:
-        request.state.apitally_consumer = "test2"
+        request.state.apiradar_consumer = "test2"
         return f"foo: {bar}"
 
     @post("/bar")
@@ -63,10 +63,10 @@ async def app(module_mocker: MockerFixture) -> Litestar:
 
         return Stream(stream_response())
 
-    def identify_consumer(request: Request) -> Optional[ApitallyConsumer]:
-        return ApitallyConsumer("test1", name="Test 1") if "/foo" in request.route_handler.paths else None
+    def identify_consumer(request: Request) -> Optional[ApiradarConsumer]:
+        return ApiradarConsumer("test1", name="Test 1") if "/foo" in request.route_handler.paths else None
 
-    plugin = ApitallyPlugin(
+    plugin = ApiradarPlugin(
         client_id=CLIENT_ID,
         env=ENV,
         app_version="1.2.3",
@@ -88,7 +88,7 @@ async def client(app: Litestar) -> TestClient:
 
 
 def test_middleware_requests_ok(client: TestClient, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.get("/foo/")
     assert response.status_code == 200
@@ -125,7 +125,7 @@ def test_middleware_requests_ok(client: TestClient, mocker: MockerFixture):
 
 
 def test_middleware_requests_unhandled(client: TestClient, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.post("/xxx")
     assert response.status_code == 404
@@ -133,8 +133,8 @@ def test_middleware_requests_unhandled(client: TestClient, mocker: MockerFixture
 
 
 def test_middleware_requests_error(client: TestClient, mocker: MockerFixture):
-    mock1 = mocker.patch("apitally.client.base.RequestCounter.add_request")
-    mock2 = mocker.patch("apitally.client.base.ServerErrorCounter.add_server_error")
+    mock1 = mocker.patch("apiradar.client.base.RequestCounter.add_request")
+    mock2 = mocker.patch("apiradar.client.base.ServerErrorCounter.add_server_error")
 
     response = client.post("/baz")
     assert response.status_code == 500
@@ -152,7 +152,7 @@ def test_middleware_requests_error(client: TestClient, mocker: MockerFixture):
 
 
 def test_middleware_validation_error(client: TestClient, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.ValidationErrorCounter.add_validation_errors")
+    mock = mocker.patch("apiradar.client.base.ValidationErrorCounter.add_validation_errors")
 
     # Validation error as foo must be an integer
     response = client.get("/val?foo=bar")
@@ -167,7 +167,7 @@ def test_middleware_validation_error(client: TestClient, mocker: MockerFixture):
 
 
 def test_get_startup_data(app: Litestar, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.asyncio.ApitallyClient.set_startup_data")
+    mock = mocker.patch("apiradar.client.asyncio.ApiradarClient.set_startup_data")
     app.on_startup[0](app)  # type: ignore[call-arg]
     mock.assert_called_once()
     data = mock.call_args.args[0]

@@ -13,10 +13,10 @@ from django.conf import settings
 from django.urls import URLPattern, URLResolver, get_resolver
 from django.utils.module_loading import import_string
 
-from apitally.client.base import Consumer as ApitallyConsumer
-from apitally.client.logging import get_logger
-from apitally.client.threading import ApitallyClient
-from apitally.common import get_versions
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.client.logging import get_logger
+from apiradar.client.threading import ApiradarClient
+from apiradar.common import get_versions
 
 
 if TYPE_CHECKING:
@@ -24,21 +24,21 @@ if TYPE_CHECKING:
     from ninja import NinjaAPI
 
 
-__all__ = ["ApitallyMiddleware", "ApitallyConsumer"]
+__all__ = ["ApiradarMiddleware", "ApiradarConsumer"]
 logger = get_logger(__name__)
 
 
 @dataclass
-class ApitallyMiddlewareConfig:
+class ApiradarMiddlewareConfig:
     client_id: str
     env: str
     app_version: Optional[str]
-    identify_consumer_callback: Optional[Callable[[HttpRequest], Union[str, ApitallyConsumer, None]]]
+    identify_consumer_callback: Optional[Callable[[HttpRequest], Union[str, ApiradarConsumer, None]]]
     urlconfs: List[Optional[str]]
 
 
-class ApitallyMiddleware:
-    config: Optional[ApitallyMiddlewareConfig] = None
+class ApiradarMiddleware:
+    config: Optional[ApiradarMiddlewareConfig] = None
 
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
@@ -48,7 +48,7 @@ class ApitallyMiddleware:
         self.callbacks = set()
 
         if self.config is None:
-            config = getattr(settings, "APITALLY_MIDDLEWARE", {})
+            config = getattr(settings, "APIRADAR_MIDDLEWARE", {})
             self.configure(**config)
             assert self.config is not None
 
@@ -61,7 +61,7 @@ class ApitallyMiddleware:
         if self.ninja_available and None not in self.config.urlconfs:
             self.callbacks.update(_get_ninja_callbacks(self.config.urlconfs))
 
-        self.client = ApitallyClient(client_id=self.config.client_id, env=self.config.env)
+        self.client = ApiradarClient(client_id=self.config.client_id, env=self.config.env)
         self.client.start_sync_loop()
         self.client.set_startup_data(
             _get_startup_data(
@@ -79,7 +79,7 @@ class ApitallyMiddleware:
         identify_consumer_callback: Optional[str] = None,
         urlconf: Optional[Union[List[Optional[str]], str]] = None,
     ) -> None:
-        cls.config = ApitallyMiddlewareConfig(
+        cls.config = ApiradarMiddlewareConfig(
             client_id=client_id,
             env=env,
             app_version=app_version,
@@ -170,20 +170,20 @@ class ApitallyMiddleware:
                 logger.exception("Failed to get path for request")
         return None
 
-    def get_consumer(self, request: HttpRequest) -> Optional[ApitallyConsumer]:
-        if hasattr(request, "apitally_consumer") and request.apitally_consumer:
-            return ApitallyConsumer.from_string_or_object(request.apitally_consumer)
+    def get_consumer(self, request: HttpRequest) -> Optional[ApiradarConsumer]:
+        if hasattr(request, "apiradar_consumer") and request.apiradar_consumer:
+            return ApiradarConsumer.from_string_or_object(request.apiradar_consumer)
         if hasattr(request, "consumer_identifier") and request.consumer_identifier:
             # Keeping this for legacy support
             warn(
                 "Providing a consumer identifier via `request.consumer_identifier` is deprecated, "
-                "use `request.apitally_consumer` instead.",
+                "use `request.apiradar_consumer` instead.",
                 DeprecationWarning,
             )
-            return ApitallyConsumer.from_string_or_object(request.consumer_identifier)
+            return ApiradarConsumer.from_string_or_object(request.consumer_identifier)
         if self.config is not None and self.config.identify_consumer_callback is not None:
             consumer = self.config.identify_consumer_callback(request)
-            return ApitallyConsumer.from_string_or_object(consumer)
+            return ApiradarConsumer.from_string_or_object(consumer)
         return None
 
 

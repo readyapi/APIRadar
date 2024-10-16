@@ -12,14 +12,14 @@ from .constants import CLIENT_ID, ENV
 
 
 if TYPE_CHECKING:
-    from apitally.client.asyncio import ApitallyClient
+    from apiradar.client.asyncio import ApiradarClient
 
 
 @pytest.fixture(scope="module")
-async def client() -> ApitallyClient:
-    from apitally.client.asyncio import ApitallyClient
+async def client() -> ApiradarClient:
+    from apiradar.client.asyncio import ApiradarClient
 
-    client = ApitallyClient(client_id=CLIENT_ID, env=ENV)
+    client = ApiradarClient(client_id=CLIENT_ID, env=ENV)
     client.request_counter.add_request(
         consumer=None,
         method="GET",
@@ -56,9 +56,9 @@ async def client() -> ApitallyClient:
     return client
 
 
-async def test_sync_loop(client: ApitallyClient, mocker: MockerFixture):
-    send_sync_data_mock = mocker.patch("apitally.client.asyncio.ApitallyClient.send_sync_data")
-    mocker.patch("apitally.client.base.INITIAL_SYNC_INTERVAL", 0.05)
+async def test_sync_loop(client: ApiradarClient, mocker: MockerFixture):
+    send_sync_data_mock = mocker.patch("apiradar.client.asyncio.ApiradarClient.send_sync_data")
+    mocker.patch("apiradar.client.base.INITIAL_SYNC_INTERVAL", 0.05)
 
     client.start_sync_loop()
     await asyncio.sleep(0.2)  # Ensure loop starts
@@ -67,8 +67,8 @@ async def test_sync_loop(client: ApitallyClient, mocker: MockerFixture):
     assert send_sync_data_mock.await_count >= 1
 
 
-async def test_send_sync_data(client: ApitallyClient, httpx_mock: HTTPXMock):
-    from apitally.client.base import HUB_BASE_URL, HUB_VERSION
+async def test_send_sync_data(client: ApiradarClient, httpx_mock: HTTPXMock):
+    from apiradar.client.base import HUB_BASE_URL, HUB_VERSION
 
     httpx_mock.add_response()
     async with client.get_http_client() as http_client:
@@ -83,8 +83,8 @@ async def test_send_sync_data(client: ApitallyClient, httpx_mock: HTTPXMock):
     assert request_data["validation_errors"][0]["error_count"] == 1
 
 
-async def test_set_startup_data(client: ApitallyClient, httpx_mock: HTTPXMock):
-    from apitally.client.base import HUB_BASE_URL, HUB_VERSION
+async def test_set_startup_data(client: ApiradarClient, httpx_mock: HTTPXMock):
+    from apiradar.client.base import HUB_BASE_URL, HUB_VERSION
 
     httpx_mock.add_response()
     data = {"paths": [], "client_version": "1.0.0", "starlette_version": "0.28.0", "python_version": "3.11.4"}

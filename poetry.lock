@@ -2337,7 +2337,7 @@ files = [
 [[package]]
 name = "sentry-sdk"
 version = "2.16.0"
-description = "Python client for Sentry (http://sentry.io)"
+description = "Python client for Sentry (https://sentry.io)"
 optional = true
 python-versions = ">=3.6"
 files = [

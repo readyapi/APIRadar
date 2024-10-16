@@ -24,7 +24,7 @@ def identify_consumer(request: HttpRequest) -> Optional[str]:
 @pytest.fixture(scope="module")
 def reset_modules() -> None:
     for module in list(sys.modules):
-        if module.startswith("django.") or module.startswith("apitally."):
+        if module.startswith("django.") or module.startswith("apiradar."):
             del sys.modules[module]
 
 
@@ -33,20 +33,20 @@ def setup(reset_modules, module_mocker: MockerFixture) -> None:
     import django
     from django.conf import settings
 
-    module_mocker.patch("apitally.client.threading.ApitallyClient._instance", None)
-    module_mocker.patch("apitally.client.threading.ApitallyClient.start_sync_loop")
-    module_mocker.patch("apitally.client.threading.ApitallyClient.set_startup_data")
-    module_mocker.patch("apitally.django.ApitallyMiddleware.config", None)
+    module_mocker.patch("apiradar.client.threading.ApiradarClient._instance", None)
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.start_sync_loop")
+    module_mocker.patch("apiradar.client.threading.ApiradarClient.set_startup_data")
+    module_mocker.patch("apiradar.django.ApiradarMiddleware.config", None)
 
     settings.configure(
         ROOT_URLCONF="tests.django_ninja_urls",
         ALLOWED_HOSTS=["testserver"],
         SECRET_KEY="secret",
         MIDDLEWARE=[
-            "apitally.django_ninja.ApitallyMiddleware",
+            "apiradar.django_ninja.ApiradarMiddleware",
             "django.middleware.common.CommonMiddleware",
         ],
-        APITALLY_MIDDLEWARE={
+        APIRADAR_MIDDLEWARE={
             "client_id": "76b5cb91-a0a4-4ea0-a894-57d2b9fcb2c9",
             "env": "dev",
             "identify_consumer_callback": "tests.test_django_ninja.identify_consumer",
@@ -66,7 +66,7 @@ def client(module_mocker: MockerFixture) -> Client:
 
 
 def test_middleware_requests_ok(client: Client, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.get("/api/foo/123")
     assert response.status_code == 200
@@ -88,7 +88,7 @@ def test_middleware_requests_ok(client: Client, mocker: MockerFixture):
 
 
 def test_middleware_requests_404(client: Client, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.RequestCounter.add_request")
+    mock = mocker.patch("apiradar.client.base.RequestCounter.add_request")
 
     response = client.get("/api/none")
     assert response.status_code == 404
@@ -96,8 +96,8 @@ def test_middleware_requests_404(client: Client, mocker: MockerFixture):
 
 
 def test_middleware_requests_error(client: Client, mocker: MockerFixture):
-    mock1 = mocker.patch("apitally.client.base.RequestCounter.add_request")
-    mock2 = mocker.patch("apitally.client.base.ServerErrorCounter.add_server_error")
+    mock1 = mocker.patch("apiradar.client.base.RequestCounter.add_request")
+    mock2 = mocker.patch("apiradar.client.base.ServerErrorCounter.add_server_error")
 
     response = client.put("/api/baz")
     assert response.status_code == 500
@@ -115,7 +115,7 @@ def test_middleware_requests_error(client: Client, mocker: MockerFixture):
 
 
 def test_middleware_validation_error(client: Client, mocker: MockerFixture):
-    mock = mocker.patch("apitally.client.base.ValidationErrorCounter.add_validation_errors")
+    mock = mocker.patch("apiradar.client.base.ValidationErrorCounter.add_validation_errors")
 
     response = client.get("/api/val?foo=bar")
     assert response.status_code == 422
@@ -128,7 +128,7 @@ def test_middleware_validation_error(client: Client, mocker: MockerFixture):
 
 
 def test_get_startup_data():
-    from apitally.django import _get_startup_data
+    from apiradar.django import _get_startup_data
 
     data = _get_startup_data(app_version="1.2.3", urlconfs=[None])
     openapi = json.loads(data["openapi"])
@@ -144,7 +144,7 @@ def test_get_startup_data():
 def test_get_ninja_api_instances():
     from ninja import NinjaAPI
 
-    from apitally.django import _get_ninja_api_instances
+    from apiradar.django import _get_ninja_api_instances
 
     apis = _get_ninja_api_instances()
     assert len(apis) == 1
@@ -153,7 +153,7 @@ def test_get_ninja_api_instances():
 
 
 def test_get_ninja_api_endpoints():
-    from apitally.django import _get_ninja_paths
+    from apiradar.django import _get_ninja_paths
 
     endpoints = _get_ninja_paths([None])
     assert len(endpoints) == 5
@@ -162,7 +162,7 @@ def test_get_ninja_api_endpoints():
 
 
 def test_check_import():
-    from apitally.django import _check_import
+    from apiradar.django import _check_import
 
     assert _check_import("ninja") is True
     assert _check_import("nonexistentpackage") is False

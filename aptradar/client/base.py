@@ -14,12 +14,12 @@ from math import floor
 from typing import Any, Dict, List, Optional, Set, Tuple, Type, TypeVar, Union, cast
 from uuid import UUID, uuid4
 
-from apitally.client.logging import get_logger
+from apiradar.client.logging import get_logger
 
 
 logger = get_logger(__name__)
 
-HUB_BASE_URL = os.getenv("APITALLY_HUB_BASE_URL") or "http://hub.localhost"
+HUB_BASE_URL = os.getenv("APIRADAR_HUB_BASE_URL") or "http://hub.localhost"
 HUB_VERSION = "v2"
 REQUEST_TIMEOUT = 10
 MAX_QUEUE_TIME = 3600
@@ -29,23 +29,23 @@ INITIAL_SYNC_INTERVAL_DURATION = 3600
 MAX_EXCEPTION_MSG_LENGTH = 2048
 MAX_EXCEPTION_TRACEBACK_LENGTH = 65536
 
-TApitallyClient = TypeVar("TApitallyClient", bound="ApitallyClientBase")
+TApiradarClient = TypeVar("TApiradarClient", bound="ApiradarClientBase")
 
 
-class ApitallyClientBase(ABC):
-    _instance: Optional[ApitallyClientBase] = None
+class ApiradarClientBase(ABC):
+    _instance: Optional[ApiradarClientBase] = None
     _lock = threading.Lock()
 
-    def __new__(cls: Type[TApitallyClient], *args, **kwargs) -> TApitallyClient:
+    def __new__(cls: Type[TApiradarClient], *args, **kwargs) -> TApiradarClient:
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
-        return cast(TApitallyClient, cls._instance)
+        return cast(TApiradarClient, cls._instance)
 
     def __init__(self, client_id: str, env: str) -> None:
         if hasattr(self, "client_id"):
-            raise RuntimeError("Apitally client is already initialized")  # pragma: no cover
+            raise RuntimeError("Apiradar client is already initialized")  # pragma: no cover
         try:
             UUID(client_id)
         except ValueError:
@@ -66,10 +66,10 @@ class ApitallyClientBase(ABC):
         self._started_at = time.time()
 
     @classmethod
-    def get_instance(cls: Type[TApitallyClient]) -> TApitallyClient:
+    def get_instance(cls: Type[TApiradarClient]) -> TApiradarClient:
         if cls._instance is None:
-            raise RuntimeError("Apitally client not initialized")  # pragma: no cover
-        return cast(TApitallyClient, cls._instance)
+            raise RuntimeError("Apiradar client not initialized")  # pragma: no cover
+        return cast(TApiradarClient, cls._instance)
 
     @property
     def sync_interval(self) -> float:

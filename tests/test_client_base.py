@@ -2,7 +2,7 @@ from pytest_mock import MockerFixture
 
 
 def test_request_counter():
-    from apitally.client.base import RequestCounter
+    from apiradar.client.base import RequestCounter
 
     requests = RequestCounter()
     requests.add_request(
@@ -54,7 +54,7 @@ def test_request_counter():
 
 
 def test_validation_error_counter():
-    from apitally.client.base import ValidationErrorCounter
+    from apiradar.client.base import ValidationErrorCounter
 
     validation_errors = ValidationErrorCounter()
     validation_errors.add_validation_errors(
@@ -99,7 +99,7 @@ def test_validation_error_counter():
 
 
 def test_server_error_counter():
-    from apitally.client.base import ServerErrorCounter
+    from apiradar.client.base import ServerErrorCounter
 
     server_errors = ServerErrorCounter()
     server_errors.add_server_error(
@@ -126,10 +126,10 @@ def test_server_error_counter():
 
 
 def test_exception_truncation(mocker: MockerFixture):
-    from apitally.client.base import ServerErrorCounter
+    from apiradar.client.base import ServerErrorCounter
 
-    mocker.patch("apitally.client.base.MAX_EXCEPTION_MSG_LENGTH", 32)
-    mocker.patch("apitally.client.base.MAX_EXCEPTION_TRACEBACK_LENGTH", 128)
+    mocker.patch("apiradar.client.base.MAX_EXCEPTION_MSG_LENGTH", 32)
+    mocker.patch("apiradar.client.base.MAX_EXCEPTION_TRACEBACK_LENGTH", 128)
 
     try:
         raise ValueError("a" * 88)
@@ -144,7 +144,7 @@ def test_exception_truncation(mocker: MockerFixture):
 
 
 def test_consumer_registry():
-    from apitally.client.base import Consumer, ConsumerRegistry
+    from apiradar.client.base import Consumer, ConsumerRegistry
 
     consumer_registry = ConsumerRegistry()
     consumer_registry.add_or_update_consumer(None)

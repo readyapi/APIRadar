@@ -1,13 +1,13 @@
 .PHONY: format check test test-coverage
 
 format:
-	ruff check apitally tests --fix --select I
-	ruff format apitally tests
+	ruff check apiradar tests --fix --select I
+	ruff format apiradar tests
 
 check:
-	ruff check apitally tests
-	ruff format --diff apitally tests
-	mypy --install-types --non-interactive apitally tests
+	ruff check apiradar tests
+	ruff format --diff apiradar tests
+	mypy --install-types --non-interactive apiradar tests
 	poetry check
 
 test:

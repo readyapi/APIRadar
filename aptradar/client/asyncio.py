@@ -10,8 +10,8 @@ from typing import Any, Dict, Optional, Tuple
 import backoff
 import httpx
 
-from apitally.client.base import MAX_QUEUE_TIME, REQUEST_TIMEOUT, ApitallyClientBase
-from apitally.client.logging import get_logger
+from apiradar.client.base import MAX_QUEUE_TIME, REQUEST_TIMEOUT, ApiradarClientBase
+from apiradar.client.logging import get_logger
 
 
 logger = get_logger(__name__)
@@ -25,7 +25,7 @@ retry = partial(
 )
 
 
-class ApitallyClient(ApitallyClientBase):
+class ApiradarClient(ApiradarClientBase):
     def __init__(self, client_id: str, env: str) -> None:
         super().__init__(client_id=client_id, env=env)
         self._stop_sync_loop = False
@@ -53,7 +53,7 @@ class ApitallyClient(ApitallyClientBase):
                 time_elapsed = time.perf_counter() - time_start
                 await asyncio.sleep(self.sync_interval - time_elapsed)
             except Exception:  # pragma: no cover
-                logger.exception("An error occurred during sync with Apitally hub")
+                logger.exception("An error occurred during sync with Apiradar hub")
             first_iteration = False
 
     def stop_sync_loop(self) -> None:
@@ -101,7 +101,7 @@ class ApitallyClient(ApitallyClientBase):
 
     @retry(raise_on_giveup=False)
     async def _send_startup_data(self, client: httpx.AsyncClient, data: Dict[str, Any]) -> None:
-        logger.debug("Sending startup data to Apitally hub")
+        logger.debug("Sending startup data to Apiradar hub")
         response = await client.post(url="/startup", json=data, timeout=REQUEST_TIMEOUT)
         self._handle_hub_response(response)
         self._startup_data_sent = True
@@ -109,15 +109,15 @@ class ApitallyClient(ApitallyClientBase):
 
     @retry()
     async def _send_sync_data(self, client: httpx.AsyncClient, data: Dict[str, Any]) -> None:
-        logger.debug("Synchronizing data with Apitally hub")
+        logger.debug("Synchronizing data with Apiradar hub")
         response = await client.post(url="/sync", json=data)
         self._handle_hub_response(response)
 
     def _handle_hub_response(self, response: httpx.Response) -> None:
         if response.status_code == 404:
             self.stop_sync_loop()
-            logger.error("Invalid Apitally client ID: %s", self.client_id)
+            logger.error("Invalid Apiradar client ID: %s", self.client_id)
         elif response.status_code == 422:
-            logger.error("Received validation error from Apitally hub: %s", response.json())
+            logger.error("Received validation error from Apiradar hub: %s", response.json())
         else:
             response.raise_for_status()

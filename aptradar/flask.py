@@ -11,9 +11,9 @@ from werkzeug.datastructures import Headers
 from werkzeug.exceptions import NotFound
 from werkzeug.test import Client
 
-from apitally.client.base import Consumer as ApitallyConsumer
-from apitally.client.threading import ApitallyClient
-from apitally.common import get_versions
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.client.threading import ApiradarClient
+from apiradar.common import get_versions
 
 
 if TYPE_CHECKING:
@@ -21,10 +21,10 @@ if TYPE_CHECKING:
     from werkzeug.routing.map import Map
 
 
-__all__ = ["ApitallyMiddleware", "ApitallyConsumer"]
+__all__ = ["ApiradarMiddleware", "ApiradarConsumer"]
 
 
-class ApitallyMiddleware:
+class ApiradarMiddleware:
     def __init__(
         self,
         app: Flask,
@@ -38,7 +38,7 @@ class ApitallyMiddleware:
         self.wsgi_app = app.wsgi_app
         self.filter_unhandled_paths = filter_unhandled_paths
         self.patch_handle_exception()
-        self.client = ApitallyClient(client_id=client_id, env=env)
+        self.client = ApiradarClient(client_id=client_id, env=env)
         self.client.start_sync_loop()
         self.delayed_set_startup_data(app_version, openapi_url)
 
@@ -123,17 +123,17 @@ class ApitallyMiddleware:
         except NotFound:
             return environ["PATH_INFO"], False
 
-    def get_consumer(self) -> Optional[ApitallyConsumer]:
-        if "apitally_consumer" in g and g.apitally_consumer:
-            return ApitallyConsumer.from_string_or_object(g.apitally_consumer)
+    def get_consumer(self) -> Optional[ApiradarConsumer]:
+        if "apiradar_consumer" in g and g.apiradar_consumer:
+            return ApiradarConsumer.from_string_or_object(g.apiradar_consumer)
         if "consumer_identifier" in g and g.consumer_identifier:
             # Keeping this for legacy support
             warn(
                 "Providing a consumer identifier via `g.consumer_identifier` is deprecated, "
-                "use `g.apitally_consumer` instead.",
+                "use `g.apiradar_consumer` instead.",
                 DeprecationWarning,
             )
-            return ApitallyConsumer.from_string_or_object(g.consumer_identifier)
+            return ApiradarConsumer.from_string_or_object(g.consumer_identifier)
         return None
 
 
