@@ -18,9 +18,8 @@ if TYPE_CHECKING:
 
 @pytest.fixture(scope="module")
 def app(module_mocker: MockerFixture) -> Flask:
-    from flask import Flask, g
-
     from apiradar.flask import ApiradarMiddleware
+    from flask import Flask, g
 
     module_mocker.patch("apiradar.client.threading.ApiradarClient._instance", None)
     module_mocker.patch("apiradar.client.threading.ApiradarClient.start_sync_loop")

@@ -34,12 +34,11 @@ async def app(request: FixtureRequest, module_mocker: MockerFixture) -> Starlett
 
 
 def get_starlette_app() -> Starlette:
+    from apiradar.starlette import ApiradarMiddleware
     from starlette.applications import Starlette
     from starlette.requests import Request
     from starlette.responses import PlainTextResponse, StreamingResponse
     from starlette.routing import Route
-
-    from apiradar.starlette import ApiradarMiddleware
 
     def foo(request: Request):
         request.state.apiradar_consumer = "test"
@@ -78,10 +77,9 @@ def get_starlette_app() -> Starlette:
 
 
 def get_readyapi_app() -> Starlette:
+    from apiradar.readyapi import ApiradarConsumer, ApiradarMiddleware
     from readyapi import Query, ReadyAPI, Request
     from readyapi.responses import StreamingResponse
-
-    from apiradar.readyapi import ApiradarConsumer, ApiradarMiddleware
 
     def identify_consumer(request: Request) -> Optional[ApiradarConsumer]:
         return ApiradarConsumer("test", name="Test")

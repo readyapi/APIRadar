@@ -48,7 +48,7 @@ Use `pip` to install and provide your framework of choice as an extra, for
 example:
 
 ```bash
-pip install apiradar[readyapi]
+pip install readyapi
 ```
 
 The available extras are: `readyapi`, `flask`, `django_rest_framework`,

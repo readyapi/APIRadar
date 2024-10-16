@@ -7,6 +7,9 @@ import time
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from warnings import warn
 
+from apiradar.client.asyncio import ApiradarClient
+from apiradar.client.base import Consumer as ApiradarConsumer
+from apiradar.common import get_versions
 from httpx import HTTPStatusError
 from starlette.datastructures import Headers
 from starlette.requests import Request
@@ -14,10 +17,6 @@ from starlette.routing import BaseRoute, Match, Router
 from starlette.schemas import EndpointInfo, SchemaGenerator
 from starlette.testclient import TestClient
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
-
-from apiradar.client.asyncio import ApiradarClient
-from apiradar.client.base import Consumer as ApiradarConsumer
-from apiradar.common import get_versions
 
 
 __all__ = ["ApiradarMiddleware", "ApiradarConsumer"]

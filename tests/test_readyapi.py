@@ -24,9 +24,8 @@ except ImportError:
 
 @pytest.fixture(scope="module")
 def app(module_mocker: MockerFixture) -> ReadyAPI:
-    from readyapi import ReadyAPI
-
     from apiradar.readyapi import ApiradarMiddleware
+    from readyapi import ReadyAPI
 
     module_mocker.patch("apiradar.client.asyncio.ApiradarClient._instance", None)
     module_mocker.patch("apiradar.client.asyncio.ApiradarClient.start_sync_loop")
