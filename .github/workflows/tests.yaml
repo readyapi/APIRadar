@@ -1,0 +1,103 @@
+name: Tests
+on:
+  push:
+    paths-ignore:
+      - .gitignore
+      - LICENSE
+      - README.md
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: pre-commit/action@v3.0.1
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.local
+          key: poetry-0 # increment to reset cache
+      - name: Install and configure Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+          version: "1.8.3"
+          virtualenvs-in-project: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: poetry
+      - name: Run Poetry check
+        run: poetry check
+      - name: Install dependencies
+        run: poetry install --no-interaction --all-extras
+      - name: Run checks
+        run: poetry run make check
+      - name: Run tests and create coverage report
+        run: poetry run make test-coverage
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        deps:
+          - starlette
+          - readyapi starlette
+          - readyapi==0.100.1 starlette
+          - readyapi==0.87.0 starlette anyio==3.*
+          - flask
+          - flask==2.3.*
+          - flask==2.0.3 Werkzeug==2.*
+          - djangorestframework django uritemplate inflection
+          - djangorestframework django==4.2.* uritemplate inflection
+          - djangorestframework==3.12.* django==3.2.* uritemplate
+          - djangorestframework==3.10.* django==2.2.* uritemplate
+          - django-ninja django
+          - django-ninja==0.22.* django
+          - django-ninja==0.18.0 django
+          - litestar
+          - litestar==2.6.1
+          - litestar==2.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.local # the path depends on the OS
+          key: poetry-0 # increment to reset cache
+      - name: Install and configure Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+          version: "1.8.3"
+          virtualenvs-in-project: true
+      - name: Build Python package wheel
+        run: poetry build -f wheel
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python }}"
+      - name: Install test dependencies
+        run: poetry install --no-interaction --no-root --only test
+      - name: Install app dependencies
+        run: poetry run pip install ${{ matrix.deps }} ./dist/apitally-*.whl
+      - name: Run tests
+        run: poetry run make test

@@ -1,0 +1,5 @@
+{
+  "$schema": "http://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>apitally/renovate-config"],
+  "ignoreDeps": ["pytest-asyncio"]
+}
